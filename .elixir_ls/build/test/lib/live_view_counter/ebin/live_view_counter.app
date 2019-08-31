@@ -9,6 +9,7 @@
                         'Elixir.LiveViewCounterWeb.ChannelCase',
                         'Elixir.LiveViewCounterWeb.ConnCase',
                         'Elixir.LiveViewCounterWeb.CounterLive',
+                        'Elixir.LiveViewCounterWeb.CounterView',
                         'Elixir.LiveViewCounterWeb.Endpoint',
                         'Elixir.LiveViewCounterWeb.ErrorHelpers',
                         'Elixir.LiveViewCounterWeb.ErrorView',
