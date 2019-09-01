@@ -7,14 +7,22 @@ defmodule LiveViewCounterWeb.CounterLive do
   end
 
   def mount(_session, socket) do
-    {:ok, assign(socket, :val, 0)}
+    if connected?(socket) do
+      :timer.send_interval(1000, self(), :tick)
+    end
+
+    {:ok, assign(socket, :count, 0)}
   end
 
   def handle_event("inc", _, socket) do
-    {:noreply, update(socket, :val, &(&1 + 1))}
+    {:noreply, update(socket, :count, &(&1 + 1))}
   end
 
   def handle_event("dec", _, socket) do
-    {:noreply, update(socket, :val, &(&1 - 1))}
+    {:noreply, update(socket, :count, &(&1 - 1))}
+  end
+
+  def handle_info(:tick, socket) do
+    {:noreply, update(socket, :count, &(&1 + 1))}
   end
 end

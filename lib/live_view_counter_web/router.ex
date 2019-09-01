@@ -20,6 +20,7 @@ defmodule LiveViewCounterWeb.Router do
 
     # get "/", PageController, :index
     live("/", CounterLive)
+    live("/snake", SnakeLive)
   end
 
   # Other scopes may use custom stacks.

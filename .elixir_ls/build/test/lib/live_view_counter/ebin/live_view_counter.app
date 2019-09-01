@@ -19,6 +19,7 @@
                         'Elixir.LiveViewCounterWeb.PageView',
                         'Elixir.LiveViewCounterWeb.Router',
                         'Elixir.LiveViewCounterWeb.Router.Helpers',
+                        'Elixir.LiveViewCounterWeb.SnakeLive',
                         'Elixir.LiveViewCounterWeb.UserSocket']},
               {registered,[]},
               {vsn,"0.1.0"},
