@@ -69,6 +69,7 @@ defmodule LiveViewCounterWeb.SnakeLive do
         <%= @width %>px
       </form>
     </div>
+
     <div class="snake-container" phx-keydown="keydown" phx-target="window">
       <h3 class="score" style="font-size: <%= @width %>px;">SCORE:&nbsp;<%= @score %></h3>
       <%= for block <- @compacted_tail do %>
@@ -146,6 +147,7 @@ defmodule LiveViewCounterWeb.SnakeLive do
   end
 
   def handle_event("tick", %{"tick" => tick}, socket) do
+    IO.puts("HERE TICK!!")
     {tick, ""} = Integer.parse(tick)
 
     new_socket =
