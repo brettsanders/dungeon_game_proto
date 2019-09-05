@@ -2,6 +2,7 @@
   <h1 phx-click="boom">The count is: <%= @count %></h1>
   <div>
     <% {hero_x, hero_y} = @hero_position %>
+    Hero Can Move: <%= @hero_can_move %><br>
     Hero Position ~  X: <%= hero_x %>, Y:<%= hero_y %>
   </div>
   <button phx-click="dec">-</button>
