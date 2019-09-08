@@ -43,7 +43,8 @@ defmodule LiveViewCounterWeb.DungeonLive do
       hero_can_move: true,
       game_board: initial_board,
       current_user: current_user,
-      users: []
+      users: [],
+      user_positions: %{current_user => initial_hero_position}
     }
 
     new_socket =
@@ -56,7 +57,8 @@ defmodule LiveViewCounterWeb.DungeonLive do
   def handle_event("keydown", value, socket) do
     %{"code" => direction} = value
 
-    old_hero_position = socket.assigns.hero_position
+    # old_hero_position = socket.assigns.hero_position
+    old_hero_position = socket.assigns.user_positions[socket.assigns.current_user] || {0, 0}
     hero_can_move = socket.assigns.hero_can_move
 
     # - - - - - - - - - - - -
@@ -66,13 +68,24 @@ defmodule LiveViewCounterWeb.DungeonLive do
     # - - - - - - - - - - - -
     # Generate the Game Board
     new_game_board = generate_board()
-    {x, y} = new_hero_position
-    new_game_board = put_in(new_game_board, Tuple.to_list({y, x}), "hero")
+    # {x, y} = new_hero_position
+    # new_game_board = put_in(new_game_board, Tuple.to_list({y, x}), "hero")
+
+    user_positions = socket.assigns.user_positions
+    current_user = socket.assigns.current_user
+    user_positions = Map.put(user_positions, current_user, new_hero_position)
+
+    new_game_board =
+      Enum.reduce(user_positions, new_game_board, fn user_position, acc ->
+        {name, {x, y}} = user_position
+        put_in(acc, Tuple.to_list({y, x}), name)
+      end)
 
     # IO.inspect(game_board)
     LiveViewCounterWeb.Endpoint.broadcast_from(self(), topic(1), "foo", %{
       hero_position: new_hero_position,
-      game_board: new_game_board
+      game_board: new_game_board,
+      user_positions: user_positions
     })
 
     new_socket =
@@ -80,7 +93,8 @@ defmodule LiveViewCounterWeb.DungeonLive do
       |> assign(
         hero_position: new_hero_position,
         hero_can_move: hero_can_move,
-        game_board: new_game_board
+        game_board: new_game_board,
+        user_positions: user_positions
       )
 
     {:noreply, new_socket}
@@ -90,10 +104,6 @@ defmodule LiveViewCounterWeb.DungeonLive do
     {:noreply, assign(socket, state)}
   end
 
-  # def handle_info(
-  #       %{event: "presence_diff", payload: _payload},
-  #       socket = %{assigns: %{topic: topic}}
-  #     ) do
   def handle_info(%{event: "presence_diff", payload: _payload}, socket) do
     users =
       Presence.list(topic(1))

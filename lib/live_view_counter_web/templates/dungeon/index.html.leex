@@ -6,6 +6,7 @@
     Current User: <%= @current_user  %><br>
     Hero Can Move: <%= @hero_can_move %><br>
     Hero Position ~  X: <%= hero_x %>, Y:<%= hero_y %>
+    User Positions ~ <%= for {user, {x, y}} <- @user_positions do %> <%= user %> X:<%= x %> Y:<%= y %>,<% end %>
   </div>
 
   Members: <%= for user <- @users do %> <%= user.user %>,<% end %>
