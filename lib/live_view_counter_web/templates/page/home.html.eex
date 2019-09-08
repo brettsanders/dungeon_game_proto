@@ -1,0 +1,16 @@
+<div class="container text-center p-5">
+  <h1>Dungeon Game</h1>
+
+  <div>
+    How to Play:<br>
+    Don't let the Zombie touch you or you become a Zombie.<br>
+    The Zombie then becomes the hero.
+  </div>
+
+  <br>
+  <div>
+    Play as:<br>
+    <%= link "Hero", to: "/dungeon?current_user=hero" %><br>
+    <%= link "Zombie", to: "/dungeon?current_user=zombie" %>
+  </div>
+</div>

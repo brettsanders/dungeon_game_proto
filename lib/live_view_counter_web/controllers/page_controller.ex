@@ -12,4 +12,8 @@ defmodule LiveViewCounterWeb.PageController do
       session: %{current_user: current_user}
     )
   end
+
+  def home(conn, _params) do
+    render(conn, "home.html")
+  end
 end
