@@ -2,7 +2,12 @@
   <h1 phx-click="boom">Current Hero Score: <%= @count %></h1>
   <div>
     <% {hero_x, hero_y} = @hero_position %>
-    <img width=50 src="<%= Routes.static_path(@socket, "/images/hero.png") %>" alt="Phoenix Framework Logo"/><br>
+    <%= if @current_user == "hero" do %>
+      <img width=50 src="<%= Routes.static_path(@socket, "/images/hero.png") %>" alt="Phoenix Framework Logo"/><br>
+    <% end %>
+    <%= if @current_user == "zombie" do %>
+      <img width=50 src="<%= Routes.static_path(@socket, "/images/zombie.png") %>" alt="Phoenix Framework Logo"/><br>
+    <% end  %>
     Current User: <%= @current_user  %><br>
     Hero Can Move: <%= @hero_can_move %><br>
     Hero Position ~  X: <%= hero_x %>, Y:<%= hero_y %>
@@ -18,14 +23,11 @@
 
   <div class="container">
     <%= for {_k, row} <- @game_board do %>
-      <div class="row border">
+      <div class="row border no-gutters">
         <%= for {_k, cell} <- row do  %>
-        <div class="col-sm border <%= cell || "empty" %>">
-          <%cell %>
-          <%= if cell == "hero" do %>
-          <img width=25 src="<%= Routes.static_path(@socket, "/images/hero.png") %>" alt="Phoenix Framework Logo"/>
-          <% end  %>
-          &nbsp;
+        <div class="col border <%= cell || "empty" %>">
+          <div class="square">
+          </div>
         </div>
         <% end %>
       </div>

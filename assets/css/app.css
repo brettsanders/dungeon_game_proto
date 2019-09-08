@@ -3,53 +3,39 @@
 @import "./phoenix.css";
 @import "../../deps/phoenix_live_view/assets/css/live_view.css";
 
-table,
-th,
-td {
-  border: 1px solid black;
-}
-
-td {
-  display: block;
-  float: left;
-  border: 1px solid black;
-  width: 7%;
-  padding-bottom: 7%;
-}
-
-td div {
-  position: absolute
-}
-
-table {
-  display: block;
-  width: 100%;
-}
-
-tr {
-  display: block;
-  width: 100%;
-}
-
-tbody {
-  display: block;
-  width: 100%;
-}
 
 .hero {
   background-color: lightblue;
+  background: url(/images/hero.png);
+  background-size: cover;
+}
+
+.zombie {
+  background-color: lightgreen;
+  background: url(/images/zombie.png);
+  background-size: cover;
+}
+
+.square {
+  padding-bottom: 100%;
 }
 
 .empty {
   background-color: lightgrey;
+  background:
+    /* On "top" */
+    repeating-linear-gradient(45deg,
+      transparent,
+      transparent 10px,
+      #ccc 10px,
+      #ccc 20px),
+    /* on "bottom" */
+    linear-gradient(to bottom,
+      #eee,
+      #999);
 }
 
-.game-board {
-  color: black;
-  display: grid;
-  grid-template-rows: 20px 20px 20px;
-  grid-template-columns: 20px 20px 20px;
-}
+
 
 .box {
   border: 1px solid;
