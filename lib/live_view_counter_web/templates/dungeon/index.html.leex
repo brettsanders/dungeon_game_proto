@@ -7,8 +7,15 @@
     Hero Can Move: <%= @hero_can_move %><br>
     Hero Position ~  X: <%= hero_x %>, Y:<%= hero_y %>
   </div>
-  <button phx-click="dec">-</button>
-  <button phx-click="inc">+</button>
+
+  <h3>Members</h3>
+  <%= for user <- @users do %>
+    <p>
+      <%= user.first_name %>
+    </p>
+  <% end %>
+  <%# <button phx-click="dec">-</button>
+  <button phx-click="inc">+</button> %>
 </div>
 
 <div class="game-container" phx-keydown="keydown" phx-target="window">

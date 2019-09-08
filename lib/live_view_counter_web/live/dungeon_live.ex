@@ -1,5 +1,6 @@
 defmodule LiveViewCounterWeb.DungeonLive do
   use Phoenix.LiveView
+  alias LiveViewCounterWeb.Presence
   alias LiveViewCounterWeb.DungeonView
 
   @dungeon_width 15
@@ -19,6 +20,15 @@ defmodule LiveViewCounterWeb.DungeonLive do
       :timer.send_interval(@hero_tick_speed, self(), :tick)
     end
 
+    Presence.track(
+      self(),
+      topic(1),
+      current_user,
+      %{
+        user: current_user
+      }
+    )
+
     initial_hero_position = {0, 0}
 
     # TODO: May want to DRY this
@@ -32,7 +42,8 @@ defmodule LiveViewCounterWeb.DungeonLive do
       hero_position: initial_hero_position,
       hero_can_move: true,
       game_board: initial_board,
-      current_user: current_user
+      current_user: current_user,
+      users: []
     }
 
     new_socket =
@@ -40,14 +51,6 @@ defmodule LiveViewCounterWeb.DungeonLive do
       |> assign(defaults)
 
     {:ok, new_socket}
-  end
-
-  def handle_event("inc", _, socket) do
-    {:noreply, update(socket, :count, &(&1 + 1))}
-  end
-
-  def handle_event("dec", _, socket) do
-    {:noreply, update(socket, :count, &(&1 - 1))}
   end
 
   def handle_event("keydown", value, socket) do
@@ -85,6 +88,24 @@ defmodule LiveViewCounterWeb.DungeonLive do
 
   def handle_info(%{event: "foo", payload: state}, socket) do
     {:noreply, assign(socket, state)}
+  end
+
+  # def handle_info(
+  #       %{event: "presence_diff", payload: _payload},
+  #       socket = %{assigns: %{topic: topic}}
+  #     ) do
+  def handle_info(%{event: "presence_diff", payload: _payload}, socket) do
+    users =
+      Presence.list(topic(1))
+      |> Enum.map(fn {_user_id, data} ->
+        data[:metas]
+        |> List.first()
+      end)
+
+    IO.inspect(users)
+
+    # {:noreply, assign(socket, users: users)}
+    {:noreply, socket}
   end
 
   def handle_info(:tick, socket) do
@@ -154,4 +175,12 @@ defmodule LiveViewCounterWeb.DungeonLive do
         {x, y}
     end
   end
+
+  # def handle_event("inc", _, socket) do
+  #   {:noreply, update(socket, :count, &(&1 + 1))}
+  # end
+
+  # def handle_event("dec", _, socket) do
+  #   {:noreply, update(socket, :count, &(&1 - 1))}
+  # end
 end

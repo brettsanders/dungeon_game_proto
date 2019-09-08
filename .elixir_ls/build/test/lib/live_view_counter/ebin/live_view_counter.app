@@ -17,6 +17,7 @@
                         'Elixir.LiveViewCounterWeb.LayoutView',
                         'Elixir.LiveViewCounterWeb.PageController',
                         'Elixir.LiveViewCounterWeb.PageView',
+                        'Elixir.LiveViewCounterWeb.Presence',
                         'Elixir.LiveViewCounterWeb.Router',
                         'Elixir.LiveViewCounterWeb.Router.Helpers',
                         'Elixir.LiveViewCounterWeb.SnakeLive',
