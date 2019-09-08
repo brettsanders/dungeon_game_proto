@@ -61,25 +61,6 @@ defmodule LiveViewCounterWeb.DungeonLive do
     new_hero_position = determine_new_hero_position(direction, old_hero_position)
 
     # - - - - - - - - - - - -
-    # BUGGY
-    # One Movement per Tick
-    # hero_moved? = old_hero_position != new_hero_position
-
-    # hero_position =
-    #   case hero_can_move do
-    #     true ->
-    #       new_hero_position
-
-    #     false ->
-    #       old_hero_position
-
-    #     _ ->
-    #       old_hero_position
-    #   end
-
-    # hero_can_move = if hero_moved?, do: false
-
-    # - - - - - - - - - - - -
     # Generate the Game Board
     new_game_board = generate_board()
     {x, y} = new_hero_position
