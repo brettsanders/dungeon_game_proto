@@ -6,11 +6,15 @@ defmodule LiveViewCounterWeb.DungeonLive do
   @dungeon_height 15
   @hero_tick_speed 500
 
+  defp topic(game_id), do: "game:#{game_id}"
+
   def render(assigns) do
     DungeonView.render("index.html", assigns)
   end
 
   def mount(%{current_user: current_user}, socket) do
+    LiveViewCounterWeb.Endpoint.subscribe(topic(1))
+
     if connected?(socket) do
       :timer.send_interval(@hero_tick_speed, self(), :tick)
     end
@@ -82,6 +86,10 @@ defmodule LiveViewCounterWeb.DungeonLive do
     new_game_board = put_in(new_game_board, Tuple.to_list({y, x}), "hero")
 
     # IO.inspect(game_board)
+    LiveViewCounterWeb.Endpoint.broadcast_from(self(), topic(1), "foo", %{
+      hero_position: new_hero_position,
+      game_board: new_game_board
+    })
 
     new_socket =
       socket
@@ -92,6 +100,10 @@ defmodule LiveViewCounterWeb.DungeonLive do
       )
 
     {:noreply, new_socket}
+  end
+
+  def handle_info(%{event: "foo", payload: state}, socket) do
+    {:noreply, assign(socket, state)}
   end
 
   def handle_info(:tick, socket) do
