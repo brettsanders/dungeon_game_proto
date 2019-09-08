@@ -1,24 +1,34 @@
-defmodule LiveViewCounterWeb.CounterLive do
+defmodule LiveViewCounterWeb.DungeonLive do
   use Phoenix.LiveView
-  alias LiveViewCounterWeb.CounterView
+  alias LiveViewCounterWeb.DungeonView
 
-  @dungeon_width 25
-  @dungeon_height 25
+  @dungeon_width 15
+  @dungeon_height 15
   @hero_tick_speed 500
 
   def render(assigns) do
-    CounterView.render("index.html", assigns)
+    DungeonView.render("index.html", assigns)
   end
 
-  def mount(_session, socket) do
+  def mount(%{current_user: current_user}, socket) do
     if connected?(socket) do
       :timer.send_interval(@hero_tick_speed, self(), :tick)
     end
 
+    initial_hero_position = {0, 0}
+
+    # TODO: May want to DRY this
+    # generate_board(player_positions: [{:hero, {0,0}, "Brett"}, {:zombie, {10,10}, "Derek"}])
+    initial_board = generate_board()
+
+    initial_board = put_in(initial_board, Tuple.to_list(initial_hero_position), "hero")
+
     defaults = %{
       count: 0,
-      hero_position: {0, 0},
-      hero_can_move: true
+      hero_position: initial_hero_position,
+      hero_can_move: true,
+      game_board: initial_board,
+      current_user: current_user
     }
 
     new_socket =
@@ -42,36 +52,51 @@ defmodule LiveViewCounterWeb.CounterLive do
     old_hero_position = socket.assigns.hero_position
     hero_can_move = socket.assigns.hero_can_move
 
+    # - - - - - - - - - - - -
+    # New Hero position
     new_hero_position = determine_new_hero_position(direction, old_hero_position)
-    hero_moved? = old_hero_position != new_hero_position
 
-    hero_position =
-      case hero_can_move do
-        true ->
-          new_hero_position
+    # - - - - - - - - - - - -
+    # BUGGY
+    # One Movement per Tick
+    # hero_moved? = old_hero_position != new_hero_position
 
-        false ->
-          old_hero_position
+    # hero_position =
+    #   case hero_can_move do
+    #     true ->
+    #       new_hero_position
 
-        _ ->
-          old_hero_position
-      end
+    #     false ->
+    #       old_hero_position
 
-    hero_can_move = if hero_moved?, do: false
+    #     _ ->
+    #       old_hero_position
+    #   end
+
+    # hero_can_move = if hero_moved?, do: false
+
+    # - - - - - - - - - - - -
+    # Generate the Game Board
+    new_game_board = generate_board()
+    {x, y} = new_hero_position
+    new_game_board = put_in(new_game_board, Tuple.to_list({y, x}), "hero")
+
+    # IO.inspect(game_board)
 
     new_socket =
       socket
       |> assign(
-        hero_position: hero_position,
-        hero_can_move: hero_can_move
+        hero_position: new_hero_position,
+        hero_can_move: hero_can_move,
+        game_board: new_game_board
       )
 
     {:noreply, new_socket}
   end
 
   def handle_info(:tick, socket) do
-    IO.puts("Tick")
-    IO.puts(:os.system_time(:millisecond))
+    # IO.puts("Tick")
+    # IO.puts(:os.system_time(:millisecond))
 
     new_socket =
       socket
@@ -84,12 +109,18 @@ defmodule LiveViewCounterWeb.CounterLive do
     {:noreply, new_socket}
   end
 
+  defp generate_board do
+    for row <- 0..@dungeon_height, into: %{} do
+      {row, for(cell <- 0..@dungeon_width, into: %{}, do: {cell, nil})}
+    end
+  end
+
   defp determine_new_hero_position(direction, old_hero_position) do
     {x, y} = old_hero_position
 
     case direction do
       "ArrowLeft" ->
-        IO.puts("Decrement X Now")
+        IO.puts("Decrement Col Now")
 
         # Detect left boundary
         if x - 1 >= 0 do
@@ -107,7 +138,7 @@ defmodule LiveViewCounterWeb.CounterLive do
           {x, y}
         end
 
-      "ArrowUp" ->
+      "ArrowDown" ->
         IO.puts("Increment Y Now")
 
         if(y < @dungeon_height) do
@@ -116,7 +147,7 @@ defmodule LiveViewCounterWeb.CounterLive do
           {x, y}
         end
 
-      "ArrowDown" ->
+      "ArrowUp" ->
         IO.puts("Decrement Y Now")
 
         if y > 0 do

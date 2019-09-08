@@ -1,0 +1,32 @@
+<div>
+  <h1 phx-click="boom">Current Hero Score: <%= @count %></h1>
+  <div>
+    <% {hero_x, hero_y} = @hero_position %>
+    <img width=50 src="<%= Routes.static_path(@socket, "/images/hero.png") %>" alt="Phoenix Framework Logo"/><br>
+    Current User: <%= @current_user  %><br>
+    Hero Can Move: <%= @hero_can_move %><br>
+    Hero Position ~  X: <%= hero_x %>, Y:<%= hero_y %>
+  </div>
+  <button phx-click="dec">-</button>
+  <button phx-click="inc">+</button>
+</div>
+
+<div class="game-container" phx-keydown="keydown" phx-target="window">
+
+  <div class="container">
+    <%= for {_k, row} <- @game_board do %>
+      <div class="row border">
+        <%= for {_k, cell} <- row do  %>
+        <div class="col-sm border <%= cell || "empty" %>">
+          <%cell %>
+          <%= if cell == "hero" do %>
+          <img width=25 src="<%= Routes.static_path(@socket, "/images/hero.png") %>" alt="Phoenix Framework Logo"/>
+          <% end  %>
+          &nbsp;
+        </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+</div>

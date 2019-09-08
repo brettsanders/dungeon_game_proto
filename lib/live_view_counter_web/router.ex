@@ -18,8 +18,8 @@ defmodule LiveViewCounterWeb.Router do
   scope "/", LiveViewCounterWeb do
     pipe_through :browser
 
-    # get "/", PageController, :index
-    live("/", CounterLive)
+    get "/page", PageController, :index
+    live("/", DungeonLive)
     live("/snake", SnakeLive)
   end
 

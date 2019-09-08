@@ -2,3 +2,55 @@
 
 @import "./phoenix.css";
 @import "../../deps/phoenix_live_view/assets/css/live_view.css";
+
+table,
+th,
+td {
+  border: 1px solid black;
+}
+
+td {
+  display: block;
+  float: left;
+  border: 1px solid black;
+  width: 7%;
+  padding-bottom: 7%;
+}
+
+td div {
+  position: absolute
+}
+
+table {
+  display: block;
+  width: 100%;
+}
+
+tr {
+  display: block;
+  width: 100%;
+}
+
+tbody {
+  display: block;
+  width: 100%;
+}
+
+.hero {
+  background-color: lightblue;
+}
+
+.empty {
+  background-color: lightgrey;
+}
+
+.game-board {
+  color: black;
+  display: grid;
+  grid-template-rows: 20px 20px 20px;
+  grid-template-columns: 20px 20px 20px;
+}
+
+.box {
+  border: 1px solid;
+}
