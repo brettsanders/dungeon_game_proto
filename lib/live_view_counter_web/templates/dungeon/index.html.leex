@@ -8,12 +8,7 @@
     Hero Position ~  X: <%= hero_x %>, Y:<%= hero_y %>
   </div>
 
-  <h3>Members</h3>
-  <%= for user <- @users do %>
-    <p>
-      <%= user.user %>
-    </p>
-  <% end %>
+  Members: <%= for user <- @users do %> <%= user.user %>,<% end %>
   <%# <button phx-click="dec">-</button>
   <button phx-click="inc">+</button> %>
 </div>

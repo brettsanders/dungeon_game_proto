@@ -105,7 +105,6 @@ defmodule LiveViewCounterWeb.DungeonLive do
     IO.inspect(users)
 
     {:noreply, assign(socket, users: users)}
-    {:noreply, socket}
   end
 
   def handle_info(:tick, socket) do
