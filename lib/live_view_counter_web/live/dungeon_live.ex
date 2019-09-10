@@ -14,11 +14,19 @@ defmodule LiveViewCounterWeb.DungeonLive do
   end
 
   def mount(%{current_user: current_user}, socket) do
+    IO.puts("MOUNT!!!")
+
     LiveViewCounterWeb.Endpoint.subscribe(topic(1))
+    IO.inspect(Presence.list(topic(1)))
 
     if connected?(socket) do
       :timer.send_interval(@hero_tick_speed, self(), :tick)
     end
+
+    initial_hero_position = {0, 0}
+
+    # Can / should I use presence to track the User positions ?
+    # Issue: Mount seems to clear the positions for all
 
     Presence.track(
       self(),
@@ -28,8 +36,6 @@ defmodule LiveViewCounterWeb.DungeonLive do
         user: current_user
       }
     )
-
-    initial_hero_position = {0, 0}
 
     # TODO: May want to DRY this
     # generate_board(player_positions: [{:hero, {0,0}, "Brett"}, {:zombie, {10,10}, "Derek"}])
@@ -44,7 +50,8 @@ defmodule LiveViewCounterWeb.DungeonLive do
       game_board: initial_board,
       current_user: current_user,
       users: [],
-      user_positions: %{current_user => initial_hero_position}
+      user_positions: %{current_user => initial_hero_position},
+      latest_news: {nil, nil}
     }
 
     new_socket =
@@ -75,6 +82,20 @@ defmodule LiveViewCounterWeb.DungeonLive do
     current_user = socket.assigns.current_user
     user_positions = Map.put(user_positions, current_user, new_hero_position)
 
+    # Generate some Latest News
+    random_number = Enum.random(0..10)
+
+    # Basic Naive collision detection
+    # IO.inspect(user_positions)
+    user_coordinates = Map.values(user_positions)
+
+    latest_news =
+      if random_number == 5 do
+        {"Zombie Attack! +100", DateTime.utc_now()}
+      else
+        {nil, nil}
+      end
+
     new_game_board =
       Enum.reduce(user_positions, new_game_board, fn user_position, acc ->
         {name, {x, y}} = user_position
@@ -85,7 +106,8 @@ defmodule LiveViewCounterWeb.DungeonLive do
     LiveViewCounterWeb.Endpoint.broadcast_from(self(), topic(1), "foo", %{
       hero_position: new_hero_position,
       game_board: new_game_board,
-      user_positions: user_positions
+      user_positions: user_positions,
+      latest_news: latest_news
     })
 
     new_socket =
@@ -94,7 +116,8 @@ defmodule LiveViewCounterWeb.DungeonLive do
         hero_position: new_hero_position,
         hero_can_move: hero_can_move,
         game_board: new_game_board,
-        user_positions: user_positions
+        user_positions: user_positions,
+        latest_news: latest_news
       )
 
     {:noreply, new_socket}
@@ -112,7 +135,7 @@ defmodule LiveViewCounterWeb.DungeonLive do
         |> List.first()
       end)
 
-    IO.inspect(users)
+    # IO.inspect(users)
 
     {:noreply, assign(socket, users: users)}
   end
@@ -120,15 +143,32 @@ defmodule LiveViewCounterWeb.DungeonLive do
   def handle_info(:tick, socket) do
     # IO.puts("Tick")
     # IO.puts(:os.system_time(:millisecond))
+    # IO.inspect(socket.assigns.latest_news)
+    latest_news = socket.assigns.latest_news
+
+    # IO.puts("latest news...")
+    # IO.inspect(latest_news)
+    # IO.puts("latest news...")
+
+    # if latest_news == {nil, nil} do
+    #   IO.puts("No news!")
+    # else
+    #   IO.puts("In here dude")
+    #   {latest_news_message, latest_news_time} = latest_news
+    #   IO.inspect(DateTime.diff(DateTime.utc_now(), latest_news_time))
+    #   # IO.inspect(DateTime.diff(latest_news_time, DateTime.utc_now())
+    # end
+
+    # IO.puts(DateTime.diff(latest_news_time, DateTime.utc_now()))
 
     new_socket =
       socket
       |> assign(
         count: socket.assigns.count + 1,
-        hero_can_move: true
+        hero_can_move: true,
+        latest_news: socket.assigns.latest_news
       )
 
-    #  update(socket, :count, &(&1 + 1))
     {:noreply, new_socket}
   end
 

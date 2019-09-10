@@ -1,6 +1,9 @@
 <div>
   <%= link "Back to Homepage", to: "/" %>
-  <h1 phx-click="boom">Current Hero Score: <%= @count %></h1>
+  <h1 phx-click="boom">
+    Current Hero Score: <%= @count %>
+  </h1>
+
   <div>
     <% {hero_x, hero_y} = @hero_position %>
     <%= if @current_user == "hero" do %>
@@ -16,8 +19,11 @@
   </div>
 
   Members: <%= for user <- @users do %> <%= user.user %>,<% end %>
-  <%# <button phx-click="dec">-</button>
-  <button phx-click="inc">+</button> %>
+
+  <div>Latest News:
+    <% {latest_news_message, latest_news_time} = @latest_news %>
+    <%= latest_news_message %>
+  </div>
 </div>
 
 <div class="game-container" phx-keydown="keydown" phx-target="window">
