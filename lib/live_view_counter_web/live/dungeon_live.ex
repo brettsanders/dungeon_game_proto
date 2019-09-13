@@ -62,6 +62,7 @@ defmodule LiveViewCounterWeb.DungeonLive do
   end
 
   def handle_event("keydown", value, socket) do
+    IO.inspect(value)
     %{"code" => direction} = value
 
     # old_hero_position = socket.assigns.hero_position

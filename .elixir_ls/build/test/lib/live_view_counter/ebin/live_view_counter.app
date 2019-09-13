@@ -5,6 +5,7 @@
               {description,"live_view_counter"},
               {modules,['Elixir.LiveViewCounter',
                         'Elixir.LiveViewCounter.Application',
+                        'Elixir.LiveViewCounter.GameState',
                         'Elixir.LiveViewCounterWeb',
                         'Elixir.LiveViewCounterWeb.ChannelCase',
                         'Elixir.LiveViewCounterWeb.ConnCase',
